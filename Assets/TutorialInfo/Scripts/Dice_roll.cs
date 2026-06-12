@@ -12,14 +12,15 @@ public class Dice_roll : MonoBehaviour
     void Start() { body = GetComponent<Rigidbody>(); }
 
     public TextMeshProUGUI resultText;
+    public TextMeshProUGUI latestRoll;
 
     void Update()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            body.AddForce(Vector3.up * 5f, ForceMode.Impulse);
+            body.AddForce(Vector3.up * 20f, ForceMode.Impulse);
 
-            body.AddTorque(Random.insideUnitSphere * 5f, ForceMode.Impulse);
+            body.AddTorque(Random.insideUnitSphere * Random.Range(7f, 10f), ForceMode.Impulse);
 
             StartCoroutine(WaitForDiceToStop());
 
@@ -46,7 +47,7 @@ public class Dice_roll : MonoBehaviour
         int result = GetDiceValue();
 
         resultText.text = result.ToString();
-
+        latestRoll.text = "Latest Roll: " + result.ToString();
 
     }
 
@@ -59,6 +60,7 @@ public class Dice_roll : MonoBehaviour
         transform.position = new Vector3(0, 1, 0);
         transform.rotation = Quaternion.identity;
         resultText.text = "";
+        latestRoll.text = "";
     }
 
 
