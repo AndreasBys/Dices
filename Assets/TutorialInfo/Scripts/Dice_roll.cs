@@ -9,7 +9,11 @@ public class Dice_roll : MonoBehaviour
 
     Rigidbody body;
 
-    void Start() { body = GetComponent<Rigidbody>(); }
+    void Start()
+    {
+
+        body = GetComponent<Rigidbody>();
+    }
 
     public TextMeshProUGUI resultText;
     public TextMeshProUGUI latestRoll;
@@ -28,7 +32,7 @@ public class Dice_roll : MonoBehaviour
 
         if (Keyboard.current.rKey.wasPressedThisFrame)
         {
-            Resetdie();
+            ResetDie();
         }
 
 
@@ -41,7 +45,7 @@ public class Dice_roll : MonoBehaviour
         while (body.linearVelocity.magnitude > 0.05f || body.angularVelocity.magnitude > 0.05f)
         {
             Debug.Log("Still rolling... velocity: " + body.linearVelocity.magnitude);
-            yield return new WaitForSeconds(2f); 
+            yield return new WaitForSeconds(2f);
         }
 
         int result = GetDiceValue();
@@ -53,7 +57,7 @@ public class Dice_roll : MonoBehaviour
 
 
 
-    private void Resetdie()
+    private void ResetDie()
     {
         body.linearVelocity = Vector3.zero;
         body.angularVelocity = Vector3.zero;
@@ -63,35 +67,40 @@ public class Dice_roll : MonoBehaviour
         latestRoll.text = "";
     }
 
+    enum DiceFace
+    {
+        One = 1,
+        Two = 2,
+        Three = 3,
+        Four = 4,
+        Five = 5,
+        Six = 6
+    }
 
-    int GetDiceValue()
+    public int GetDiceValue()
     {
         int topValue = 0;
         float maxDot = 0.99f;
 
-
-        Vector3[] dice = new Vector3[] // Ordren i arrayet er retningernes assignede værdier, så 1 er fremad osv.
+        var faces = new (Vector3 Direction, DiceFace Face)[]
         {
-            transform.forward.normalized, // 1
-            transform.up.normalized, // 2
-            -transform.right.normalized, // 3
-            transform.right.normalized, // 4
-            -transform.up.normalized, // 5
-            -transform.forward.normalized, // 6
-            
+        (transform.forward, DiceFace.One),
+        (transform.up, DiceFace.Two),
+        (-transform.right, DiceFace.Three),
+        (transform.right, DiceFace.Four),
+        (-transform.up, DiceFace.Five),
+        (-transform.forward, DiceFace.Six)
         };
 
 
-        for (int i = 0; i < dice.Length; i++)
+        foreach (var face in faces)
         {
-            
-            float dot = Vector3.Dot(dice[i], Vector3.up);
+            float dot = Vector3.Dot(face.Direction, Vector3.up);
 
             if (dot > maxDot)
             {
-                
                 maxDot = dot;
-                topValue = i+1;
+                topValue = (int)face.Face;
             }
         }
 
